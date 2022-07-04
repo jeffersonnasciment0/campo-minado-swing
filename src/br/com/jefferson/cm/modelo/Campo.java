@@ -13,19 +13,19 @@ public class Campo {
 	private boolean marcado = false;
 	
 	private List<Campo> vizinhos = new ArrayList<>();
-	private List<CampoObservador> observadores = new ArrayList<>(); 
+	private List<CampoObservador> observadores = new ArrayList<>();
 	
 	public Campo(int linha, int coluna) {
 		this.linha = linha;
 		this.coluna = coluna;
-	}
+	} 
 	
 	public void registrarObservador(CampoObservador observador) {
 		observadores.add(observador);
 	}
 	
 	private void notificarObservadores(CampoEvento evento) {
-		observadores.stream().forEach(observador -> observador.eventoOcorreu(this, evento));
+		observadores.stream().forEach(observador -> observador.eventoOcorreu(this, evento)); 
 	}
 	
 	boolean adicionarVizinho(Campo vizinho) {
