@@ -6,6 +6,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.SwingUtilities;
 
 import br.com.jefferson.cm.modelo.Campo;
 import br.com.jefferson.cm.modelo.CampoEvento;
@@ -25,6 +26,7 @@ public class BotaoCampo extends JButton implements CampoObservador, MouseListene
 	public BotaoCampo(Campo campo) {
 		this.campo = campo;
 		setBackground(BG_PADRAO);
+		setOpaque(true);
 		setBorder(BorderFactory.createBevelBorder(0));
 		
 		addMouseListener(this);
@@ -46,36 +48,74 @@ public class BotaoCampo extends JButton implements CampoObservador, MouseListene
 		default:
 			alplicarEstiloPadrao();
 		}
+		
+		SwingUtilities.invokeLater(() -> {
+			repaint();
+			validate();
+		});
 	}
 
 
 	private void alplicarEstiloPadrao() {
 		setBackground(BG_PADRAO);
+		setBorder(BorderFactory.createBevelBorder(0));
 		setText("");
 	}
 
 	private void aplicarEstiloExplodir() {
 		setBackground(BG_EXPLODIR);
+		setForeground(Color.WHITE);
 		setText("X");
 	}
 
 	private void aplicarEstiloMarcar() {
 		setBackground(BG_MARCAR);
+		setForeground(Color.BLACK);
 		setText("M");	
 	}
 	
 	private void aplicarEstiloAbrir() {
-		setBackground(BG_PADRAO);
+		
 		setBorder(BorderFactory.createLineBorder(Color.GRAY));
+
+		if(campo.isMinado()) {
+			setBackground(BG_EXPLODIR);
+			return;
+		}
+		
+		setBackground(BG_PADRAO);
+		
+		switch (campo.minasNaVizinhanca()) {
+		case 1:
+			setForeground(TEXTO_VERDE);
+			break;
+		case 2:
+			setForeground(Color.BLUE);
+			break;
+		case 3:
+			setForeground(Color.YELLOW);
+			break;
+		case 4:
+		case 5:
+		case 6:
+			setForeground(Color.RED);
+			break;
+		default:
+			setForeground(Color.PINK);
+		}
+		
+		String valor = !campo.vizinhancaSegura() ? 
+				campo.minasNaVizinhanca() + "" : "";
+		setText(valor);
 	}
 
 	
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if (e.getButton() == 1) {
-			System.out.println("Botão esquerdo ! ");
+			campo.abrir();
 		} else {
-			System.out.println("Outro botão !!");
+			campo.alternarMarcacao();
 		}
 		
 	}
